@@ -1,0 +1,1720 @@
+---
+title: "Final Project"
+author: "Data Science II (STAT 301-2) - Holland Blumer"
+date: "3/12/2020"
+output: html_document
+---
+
+# Table of Contents
+ I.   Introduction: Data and Scope Identification 
+II.  Works Cited 
+II.  Load and Tidy Data: Data Cleaning and Processing 
+III. Relevant Information 
+IV.  Conclusion 
+V. Appendices 
+  A. Appendix A: R code for loading data
+  B. Appendix B: R code for tidying data
+  C. Appendix C: R code for EDA
+  D. Appendix D: R code for simple linear regression
+  E. Appendix E: R code for cross validation
+  F. Appendix F: R code for ridge/lasso
+  G. Appendix G: R code for polynomial regression
+  
+
+
+## Introduction 
+
+# Overview
+The datasets used for this project come from Google Trends and Yahoo Finance. When writing the memo for this project, there were (and still are) a lot of events in the news that would inherently impact my future health and career. At the time when I was writing the memo, the coronavirus was becoming more relevant in the news which resulted in multiple airplanes going into quarantine for 14 days. Additionally, there was a lot of political turmoil. Candidates were dropping out of the primary elections one by one and the senate was still deciding whether or not to impeach President Trump. As these events were happening, the stock price of Americal Airlines (AAL) dropped nearly 40 percent (Whiteman, 2020). I became curious about whether some of these events were tied to AAL's stock. More specifically, I wanted to use this final project as an opportunity to test if the relevance of Joe Biden, Bernie Sanders, President Trump, Coronavirus, and American National Insurance Company (ANAT) predicted the stock price of AAL. Ultimately, I chose to extract data on the number of times people Googled "Joe Biden", "Bernie Sanders", "Coronavirus", "Donald Trump", in the last 90 days. I also downloaded historical data on the stock price of ANAT and AAL in the last 90 days. The predictors and response variables are all numeric.
+
+<br>
+Predictor Variables: coronavirus_count, biden_count, sanders_count, trump_count, close_anat
+Response Variable: close_aal (the closing price of AAL over the past 90 days)
+<br>
+
+# Classification
+
+<br>
+This problem is a regression problem because we are trying to predict the stock price of American Airlines. It is also a prediction problem. There are limitations to this problem. Mainly, there is very little data to work with. Even after extracting data from the past 90 days (beginning of December), there are only so many days in the week that the stock market is operating. Also, I ultimately decided to remove the rows of data where no one searched Coronavirus on Google. There is more information on the variables in the "code book" below. 
+<br>
+
+
+# Hypothesis
+
+<br>
+I hypothesize that all 5 predictor variables are valid to use when predicting the future price of the AAL stock.
+<br>
+
+
+## Datasets 
+<br>
+I downloaded the datasets from either Google Trends or Yahoo Finance. On Google Trends, I downloaded data on how many people in the United States searched Bernie Sanders, Joe Biden, Donald Trump, and Coronavirus in the past 90 days. On Yahoo Finance, I downloaded historical data on the stock prices of ANAT and AAL in the past 90 days. I am mainly focused on the close prices of ANAT and AAL each day. 
+<br>
+
+## Code book
+<br>
+coronavirus_90_days_dat: (factor) how many people in the US searched coronavirus on Google in the past 90 days (in the thousands)
+sanders_90_days_dat: (factor) how many people in the US searched Bernie Sanders on Google in the past 90 days (in the thousands)
+biden_90_days_dat: (factor) how many people in the US searched Joe Biden on Google in the past 90 days (in the thousands)
+trump_90_days_dat: (factor) how many people in the US searched Donal Trump on Google in the past 90 days (in the thousands)
+anat_90_days_dat: (factor) historical data on the American National Insurance Company (ANAT) stock price in the last 90 days
+aal_90_days_dat: (factor) historical data on American Airlines (AAL) stock in the last 90 days
+coronavirus_90_days_dat_tidy: (factor) removed header from coronavirus_90_days_dat
+sanders_90_days_dat_tidy: (factor) removed header from sanders_90_days_dat
+biden_90_days_dat_tidy: (factor) removed header from sanders_90_days_dat
+trump_90_days_dat_tidy: (factor) removed header from trump_90_days_dat
+anat_90_days_dat_tidy: (factor) data on close prices of ANAT stock and corresponding dates only
+aal_90_days_dat_tidy: (factor) data on close prices of AAL stock and corresponding dates only
+anat_aal_join: (factor) “placeholder” dataset that joins AAL’s close prices to ANAT’s close prices by date
+anat_aal_coronavirus_join: (factor) “placeholder” dataset that joins coronavirus_count to anat_aal_join by date
+anat_aal_coronavirus_sanders_join: (factor) “placeholder” dataset that joins sanders_count to anat_aal_coronavirus_join by date
+anat_aal_coronavirus_sanders_biden_join: (factor) “placeholder” dataset that joins biden_count to anat_aal_coronavirus_sanders_joi by date
+all_data_combined: (factor) dataset that joins all data, more specifically it joins trump_count to anat_aal_coronavirus_sanders_biden_join by date
+all_data_combined_tidy: (numeric) dataset that removes  “<“ sign and converts factor variables to numeric
+all_data_combined_no_date: (numeric) dataset that’s similar to all_data_combined_tidy but removes date
+all_data_combined_no_date_numeric_remove_one: (numeric) dataset that removes all rows where coronavirus_count = 1
+coronavirus_aal_plot: plots coronavirus_count vs close_aal
+biden_aal_plot: plots biden_count vs close_aal
+sanders_aal_plot: plots sanders_count vs close_aal
+trump_aal_plot: plots trump_count vs close_aal
+anat_aal_plot: plots close_anat vs close_aal
+<br>
+
+
+## Works Cited
+
+Farley, Alan. “Airline Stocks Heading South After Coronavirus Scare.” Investopedia, Investopedia, 29 Jan. 2020, www.investopedia.com/airline-stocks-heading-south-after-coronavirus-scare-4782947.
+
+“How to Convert Entire Dataframe to Numeric While Preserving Decimals?” Stack Overflow, 5 Aug. 2018,
+https://stackoverflow.com/questions/26391921/how-to-convert-entire-dataframe-to-numeric-while-preserving-decimals.
+
+Kuyper, Arend. “Data Science Manual.” 3 Lab: Linear Regression, 1 Jan. 2020, https://nustat.github.io/data-science-manual/lab-linear-regression.html.
+
+Kuyper, Arend. “Data Science Manual.” 3 Lab: Linear Regression, 1 Jan. 2020, https://nustat.github.io/data-science-manual/lab-linear-regression.html.
+
+Kuyper, Arend. “Data Science Manual.” 6 Lab: Linear Model Selection and Regularization, 1 Jan. 2020, https://nustat.github.io/data-science-manual/lab-linear-model-selection-and-regularization.html.
+
+Soergel, Andrew. “'Biden Bump' Signals Trouble for Trump.” U.S. News &amp; World Report, U.S. News &amp; World Report, 2020, www.usnews.com/news/elections/articles/2020-03-06/bidens-stock-surge-shows-trump-doesnt-own-the-economy.
+
+Stokols, Eli. “Trump, Who Tied Himself to Stock Market When It Rose, Struggles to Respond to Its Plunge.” Los Angeles Times, Los Angeles Times, 9 Mar. 2020, www.latimes.com/politics/story/2020-03-09/trump-panic-tweets-as-markets-tank.
+
+Whiteman, Lou. “Why Shares of Airline Stocks Are Falling Today.” Nasdaq, 2020, www.nasdaq.com/articles/why-shares-of-airline-stocks-are-falling-today-2020-03-05.
+
+
+#### Load Packages
+
+```{r setup, message=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(MASS)
+library(tidyverse)
+library(janitor)
+library(skimr)
+library(modelr)
+library(tidyr)
+library(dplyr)
+library(base)
+library(ggplot2)
+library(readr)
+library(GGally)
+library(grid)
+library(gridExtra)
+library(corrplot)
+library(corrr)
+library(class)
+library(broom)
+library(naniar)
+library(rsample)
+library(leaps) # find the best subset selection
+library(glmnet) # ridge & lasso
+library(glmnetUtils) # improves working with glmnet
+
+
+conflicted::conflict_prefer("filter", "dplyr")
+conflicted::conflict_prefer("select", "dplyr")
+conflicted::conflict_prefer("setdiff", "dplyr")
+conflicted::conflict_prefer("corrplot", "corrplot")
+
+set.seed(26535) # Set the seed to make it reproducible
+
+```
+
+<br>
+
+```{r echo=FALSE}
+
+# Load Coronavirus data from past 90 days
+# https://trends.google.com/trends/explore?date=today%203-m&geo=US&q=coronavirus
+
+coronavirus_90_days_dat <- read_csv("unprocessed data/coronavirus_US_90_days.csv") %>% 
+  clean_names() %>% 
+  rename(date = category_all_categories) %>% 
+  rename(coronavirus_count = x2) %>% 
+  mutate_if(is_character, factor) %>% 
+  clean_names()
+ 
+# Bernie Sanders data from the past 90 days
+# https://trends.google.com/trends/explore?date=today%203-m&geo=US&q=bernie%20sanders
+
+sanders_90_days_dat <- read_csv("unprocessed data/bernie_sanders_90_days.csv") %>% 
+  clean_names() %>% 
+  rename(date = category_all_categories) %>%
+  rename(sanders_count = x2) %>% 
+  mutate_if(is_character, factor) %>%
+  clean_names()
+
+# Joe Biden data from the past 90 days
+# https://trends.google.com/trends/explore?date=today%201-m&geo=US&q=joe%20biden
+
+biden_90_days_dat <- read_csv("unprocessed data/joe_biden_90_days.csv") %>% 
+  clean_names() %>% 
+  rename(date = category_all_categories) %>%
+  rename(biden_count = x2) %>% 
+  mutate_if(is_character, factor) %>% 
+  clean_names()
+
+# Donald Trump data from the past 90 days
+# https://trends.google.com/trends/explore?date=2019-12-15%202020-03-13&geo=US&q=donald%20trump
+
+trump_90_days_dat <- read_csv("unprocessed data/donald_trump_90_days.csv") %>% 
+  clean_names() %>% 
+  rename(date = category_all_categories) %>%
+  rename(trump_count = x2) %>% 
+  mutate_if(is_character, factor) %>% 
+  clean_names()
+
+# Load Yahoo Finance Data on American National Insurance Company (ANAT)
+# https://finance.yahoo.com/quote/AAL/history?period1=1581206400&period2=1583452800&interval=1d&filter=history&frequency=1d
+
+anat_90_days_dat <- read_csv("unprocessed data/ANAT_yahoo_90_days.csv") %>% 
+  clean_names() %>% 
+  rename(close_anat = close) %>% 
+  mutate_if(is_character, factor)
+
+# Load Yahoo Finance Data on American Airlines (AAL)
+# https://finance.yahoo.com/quote/AAL/history?period1=1581206400&period2=1583452800&interval=1d&filter=history&frequency=1d
+
+aal_90_days_dat <- read_csv("unprocessed data/AAL_yahoo_90_days.csv") %>% 
+  clean_names() %>% 
+  rename(close_aal = close) %>% 
+  mutate_if(is_character, factor)
+
+```
+<br>
+```{r echo=FALSE}
+
+skim(coronavirus_90_days_dat)
+
+skim(sanders_90_days_dat)
+
+skim(biden_90_days_dat)
+
+skim(trump_90_days_dat)
+
+skim(anat_90_days_dat)
+
+skim(aal_90_days_dat)
+
+# omit any NA values
+
+coronavirus_90_days_dat %>% 
+  na.omit()
+
+sanders_90_days_dat %>% 
+  na.omit()
+
+trump_90_days_dat %>%
+  na.omit()
+
+biden_90_days_dat %>% 
+  na.omit()
+
+anat_90_days_dat %>%
+  na.omit()
+
+aal_90_days_dat  %>% 
+   na.omit()
+
+```
+
+```{r echo=FALSE, warning=FALSE}
+
+# coronavirus dataset remove title
+coronavirus_90_days_dat_tidy <- coronavirus_90_days_dat[c(2:91), ]
+
+# bernie sanders dataset remove title
+sanders_90_days_dat_tidy <- sanders_90_days_dat[c(2:91), ]
+
+# joe biden dataset remove title
+biden_90_days_dat_tidy <- biden_90_days_dat[c(2:91), ]
+
+# donald trump dataset remove title
+trump_90_days_dat_tidy <- trump_90_days_dat[c(2:91), ]
+
+# anat yahoo dataset.. I selected close price and date only 
+anat_90_days_dat_tidy <- anat_90_days_dat %>%
+  select(-high, -low, -adj_close, -volume, -open)
+
+# aal yahoo dataset.. I selected close price and date only 
+aal_90_days_dat_tidy <- aal_90_days_dat %>%
+  select(-high, -low, -adj_close, -volume, -open)
+
+# used left join to combine datasets into one dataset
+
+anat_aal_join <- left_join(anat_90_days_dat_tidy, aal_90_days_dat_tidy , by=c("date"))
+
+anat_aal_coronavirus_join <- left_join(anat_aal_join, coronavirus_90_days_dat_tidy , by=c("date"))
+
+anat_aal_coronavirus_sanders_join <- left_join(anat_aal_coronavirus_join, sanders_90_days_dat_tidy , by=c("date"))
+
+anat_aal_coronavirus_sanders_biden_join <- left_join(anat_aal_coronavirus_sanders_join, biden_90_days_dat_tidy , by=c("date"))
+
+all_data_combined <- left_join(anat_aal_coronavirus_sanders_biden_join, trump_90_days_dat_tidy , by=c("date"))
+
+# For the coronavirus dataset, we need to change the less than 1 value to 1 to run appropriate regression methods 
+
+all_data_combined_tidy <- as.data.frame(sapply(all_data_combined, gsub, pattern = "<|>", replacement = ""))  
+
+all_data_combined_tidy <- data.frame(lapply(all_data_combined_tidy, function(x) as.numeric(as.factor(x))))
+
+write.csv("processed data/all_data_combined_tidy.csv") 
+
+all_data_combined_numeric_remove_one <- all_data_combined_tidy[c(23:60), ]
+
+# Use this dataset for when you need to leave out the dates
+all_data_combined_no_date <- all_data_combined_tidy  %>%
+  select(-date) 
+
+all_data_combined_no_date_numeric <- data.frame(lapply(all_data_combined_no_date, function(x) as.numeric(as.factor(x))))
+
+# need to remove the 1 in coronavirus data because it is affecting the correlation
+all_data_combined_no_date_numeric_remove_one <- all_data_combined_no_date_numeric[c(23:60), ]
+
+write.csv("processed data/all_data_combined_no_date_numeric_remove_one.csv") 
+
+```
+<br>
+To begin the tidying process, I first removed any NA values in the dataset. I also needed to specify the "close" variable in both of the ANAT and AAL datasets by joining them. I also needed to remove the first row from the Google Trends dataset. There are more dates in the Google Trends datasets than the stock market datasets because the stock market is only open on certain days of the week. Instead of deleting the rows with the extra dates, I used left join to join the datasets. I needed to join the stock market datasets first to avoid getting NA values. Additionally, I removed the ">" sign from the coronavirus_count. I then decided that changing the ">1" to 1 would impact the correlation between coronavirus_count and close_aal. Thus, I made the dataset smaller and removed all but one rows where coronavirus_count was 1. To do EDA later like corrplot, I needed to change all the values to numeric. (See Appendix B)
+<br>
+
+```{r echo=FALSE}
+# EDA
+ggscatmat(all_data_combined_no_date_numeric_remove_one)
+
+# the variables must be numeric for corrplot to run 
+all_data_combined_no_date_numeric_remove_one %>%
+  cor(use="pairwise.complete.obs") %>%
+  corrplot()
+
+all_data_combined_no_date_numeric_remove_one %>%
+  skim_without_charts()
+
+skim(all_data_combined_no_date_numeric_remove_one )
+
+coronavirus_aal_plot <- all_data_combined_numeric_remove_one  %>%
+  ggplot(aes(all_data_combined_numeric_remove_one$date, group = 1)) +
+  geom_line(aes(y=coronavirus_count, group = 1), color="red") +  
+  geom_line(aes(y=close_aal, group = 1), color="green") + 
+  xlab("Past 90 days") +
+  ylab("Numeric Values") +
+  ggtitle("Coronavirus v Stock Prices in 2020") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 0, size = 4), legend.title = element_blank()) 
+coronavirus_aal_plot
+
+biden_aal_plot <- all_data_combined_tidy %>%
+  ggplot(aes(all_data_combined_tidy$date, group = 1)) +
+  geom_line(aes(y=biden_count, group = 1), color="red") +  
+  geom_line(aes(y=close_aal, group = 1), color="green") + 
+  xlab("Past 90 days") +
+  ylab("Numeric Values") +
+  ggtitle("Biden v Stock Prices in 2020") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 0, size = 4), legend.title = element_blank()) 
+biden_aal_plot
+
+sanders_aal_plot <- all_data_combined_tidy %>%
+  ggplot(aes(all_data_combined_tidy$date, group = 1)) +
+  geom_line(aes(y=sanders_count, group = 1), color="red") +  
+  geom_line(aes(y=close_aal, group = 1), color="green") + 
+  xlab("Past 90 days") +
+  ylab("Numeric Values") +
+  ggtitle("Sanders v Stock Prices in 2020") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 0, size = 4), legend.title = element_blank()) 
+sanders_aal_plot
+
+trump_aal_plot <- all_data_combined_tidy %>%
+  ggplot(aes(all_data_combined_tidy$date, group = 1)) +
+  geom_line(aes(y=trump_count, group = 1), color="red") +  
+  geom_line(aes(y=close_aal, group = 1), color="green") + 
+  xlab("Past 90 days") +
+  ylab("Numeric Values") +
+  ggtitle("Trump v Stock Prices in 2020") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 0, size = 4), legend.title = element_blank()) 
+trump_aal_plot
+
+anat_aal_plot <- all_data_combined_tidy %>%
+  ggplot(aes(all_data_combined_tidy$date, group = 1)) +
+  geom_line(aes(y=close_anat, group = 1), color="red") +  
+  geom_line(aes(y=close_aal, group = 1), color="green") + 
+  xlab("Past 90 days") +
+  ylab("Numeric Values") +
+  ggtitle("ANAT Stock Prices v AAL Stock Prices in 2020") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 0, size = 4), legend.title = element_blank()) 
+anat_aal_plot
+
+```
+<br>
+The corrplot shows that all variables have a correlation with close_aal. Coronavirus_count and close_aal have a relatively strong correlation. According to the graphs, the graph that compares the peaks and dips of the lines of Biden and AAL stock appear to be pretty similar. The lines of coronavirus_count and close_anat are also similar to the one of close_aal. It is hard to compare trump_count and sanders_count with close_aal. Moving forward, I want to run a simple linear regression and use coronavirus as the predictor variable. The coronavirus_count variable ranges from 6% to 19%. 
+<br>
+```{r echo=FALSE}
+# Simple Linear Regression
+lm_fit <- all_data_combined_no_date_numeric_remove_one %>% lm(formula = close_aal ~ coronavirus_count)
+
+lm_fit %>% 
+  summary()
+
+lm_fit %>% 
+  glance() %>% 
+  clean_names()
+
+lm_fit %>% 
+  tidy() %>% 
+  bind_cols(lm_fit %>% confint_tidy()) %>% 
+  clean_names()
+
+```
+<br>
+Next, we will predict the value of close_aal for a given value of coronavirus_count. I chose some of the values of coronavirus_count from the dataset.  
+
+```{r echo=FALSE}
+coronavirus_sample_data <- tibble(coronavirus_count = c(12, 19, 31))
+
+coronavirus_sample_data %>% 
+  predict(lm_fit, newdata = ., interval = "confidence") %>% 
+  as_tibble()
+
+coronavirus_sample_data %>% 
+  predict(lm_fit, newdata = ., interval = "prediction") %>% 
+  as_tibble()
+
+```
+<br>
+A 95% confidence interval associated with a coronavirus_count value of 19 is (26.64806, 47.20553). The predicted value of close_price is 36.9 when the coronavirus count is 19. The negative value in the prediction interval indicates that the stock price will go down. 
+<br>
+
+```{r echo=FALSE}
+coronavirus_augmented <- all_data_combined_no_date_numeric_remove_one %>% 
+  augment(lm_fit, data = .) %>% 
+  clean_names()
+
+coronavirus_augmented %>% 
+  ggplot(aes(x = coronavirus_count , y = close_aal)) +
+    xlab("Coronavirus Trends") +
+    ylab("AAL Close Prices") +
+    geom_point() +
+    geom_line(aes(y = fitted), color = "pink", size = 1)
+
+coronavirus_augmented %>% 
+  ggplot(aes(x = coronavirus_count, y = close_aal)) +
+    xlab("Coronavirus Trends") +
+    ylab("AAL Close Prices") +
+    geom_point() +
+    geom_smooth(method = "lm", se = FALSE) +
+    geom_smooth(se = FALSE, color = "red", linetype = "dashed")
+
+coronavirus_augmented %>% 
+  ggplot(aes(x = fitted, y = sqrt(abs(std_resid)))) +
+    xlab("Coronavirus Trends") +
+    ylab("AAL Close Prices") +
+    geom_point() +
+    geom_smooth(color = "red", se = FALSE)
+```
+
+<br>
+There seems to be a slight response in close_aal as coronavirus_count increases. A polynomial fit seems more suitable for this relationship. Next we are going to run multiple linear regression using all the variables: biden_count, sanders_count, trump_count, anat_close and coronavirus_count. I will keep in mind that there are many more factors that impact the AAL stock price. 
+<br>
+
+
+```{r echo=FALSE}
+# Multiple Linear Regression
+
+tibble(data = list(all_data_combined_no_date_numeric_remove_one))
+
+all_models <- tibble(data = list(all_data_combined_no_date_numeric_remove_one)) %>% 
+  mutate(mod_01 = map(data, lm, formula = close_aal ~ coronavirus_count),
+         mod_02 = map(data, lm, formula = close_aal ~ poly(coronavirus_count, 5)),
+         mod_03 = map(data, lm, formula = close_aal ~ coronavirus_count + biden_count),
+         mod_04 = map(data, lm, formula = close_aal ~ coronavirus_count + trump_count + biden_count),
+         mod_05 = map(data, lm, formula = close_aal ~ coronavirus_count*biden_count),
+         mod_06 = map(data, lm, formula = close_aal ~ .),
+         mod_07 = map(data, lm, formula = close_aal ~ .*.))
+
+# Make this more tidy
+all_models <- all_models %>% 
+  pivot_longer(cols = -data, names_to = "model_name", values_to = "model_fit")
+
+```
+<br>
+Now, I want to assess the models I just used with AIC. 
+<br>
+```{r echo=FALSE}
+all_models %>% 
+  mutate(mod_glance = map(model_fit, glance)) %>%
+  unnest(mod_glance) %>% 
+  arrange(AIC) %>% 
+  select(model_name, AIC, everything())
+
+all_models %>% 
+  mutate(
+    mod_glance = map(model_fit, glance),
+    mae  = map2_dbl(model_fit, data, mae),
+    rmse = map2_dbl(model_fit, data, rmse),
+    mape = map2_dbl(model_fit, data, mape)
+  ) %>% 
+  unnest(mod_glance) %>% 
+  select(
+    model_name, r.squared, adj.r.squared, 
+    AIC, BIC, deviance, sigma, rmse, mae, mape
+  ) %>% 
+  pivot_longer(cols = -model_name, names_to = "measure", values_to = "value") %>% 
+  ggplot(aes(value, model_name)) +
+    geom_point() +
+    facet_wrap(. ~ measure, scales = "free_x")
+
+# Store the information within model database
+
+all_models <- all_models %>%
+  mutate(
+    mod_glance  = map(model_fit, glance),
+    mod_tidy    = map(model_fit, tidy),
+    add_tidy    = map(model_fit, confint_tidy),
+    mod_tidy    = map2(mod_tidy, add_tidy, bind_cols),
+    mod_augment = map2(model_fit, data, augment)
+  ) %>%
+  select(-add_tidy)
+
+```
+
+<br>
+Model 6 and 7 do a better job at fitting the data because they are more flexible. Next, I will use graphics to compare the coefficients of the predictor variables. Similar to what we learned in Chapter 3.5 of the Datascience Manual, I want to plot the 95% confidence intervals for each model with a variety of variables. 
+
+<br>
+```{r echo=FALSE}
+# Plot 95 CI for each model 
+all_models %>% 
+  unnest(mod_tidy) %>% 
+  filter(term %in% c("coronavirus_count", "biden_count", "sanders_count", "trump_count", "close_anat")) %>% 
+  ggplot(aes(model_name, estimate)) +
+    geom_pointrange(aes(ymin = conf.low, ymax = conf.high)) +
+    facet_wrap(. ~ term, scales = "free_x") +
+    coord_flip()
+```
+<br>
+Similar to the Datascience manual, Mod 02 is not present because it is a polynomial fit and therefore not compatible given its orthogonalization fitting method. To compare the polynomial fit to a simple linear fit, we will use the following graph. 
+<br>
+```{r echo=FALSE}
+# Compare polynomial fit (Model 2) to Model 1
+all_models %>% 
+  filter(model_name %in% c("mod_01", "mod_02")) %>% 
+  unnest(mod_augment) %>% 
+  ggplot(aes(x = coronavirus_count, y = close_aal)) +
+    xlab("Models") +
+    ylab("AAL Close Prices") +
+    geom_point() +
+    geom_line(aes(y = .fitted, color = model_name), size = 1)
+```
+<br>
+As expected, it seems like Mod 02 fits the underlying pattern of data points here. Next, I am going to build cross validation approaches to estimate the test error rates from fitting linear models to the all_data_combined dataset. 
+<br>
+
+```{r echo=FALSE}
+all_data_validation <- tibble(train = all_data_combined_no_date_numeric_remove_one %>% sample_frac(0.8) %>% list(),
+                          test  = all_data_combined_no_date_numeric_remove_one %>% setdiff(train) %>% list())
+```
+<br>
+Since this is a really small dataset, I decided to split the data 80/20. This will hold 20% of the data out from the fitting process. 
+<br>
+
+```{r echo=FALSE}
+# New tibble with names and corresponding formulas
+
+model_def <- tibble(degree = 1:5,
+                    fmla = str_c("close_aal ~ poly(coronavirus_count, ", degree, ")"))
+
+all_data_validation <- all_data_validation %>% 
+  crossing(model_def)
+
+all_data_validation <- all_data_validation %>% 
+  mutate(model_fit = map2(fmla, train, lm),
+         test_mse = map2_dbl(model_fit, test, mse))
+
+all_data_validation %>% 
+  select(degree, test_mse) %>% 
+  arrange(test_mse)
+
+all_data_validation %>% 
+  select(degree, test_mse) %>% 
+  ggplot(aes(x = degree, y = test_mse)) +
+    geom_line()
+
+```
+<br>
+The polynomial model of the 3rd degree has the lowest test_mse.
+<br>
+```{r echo=FALSE}
+# LOOCV
+
+all_loocv <- all_data_combined_no_date_numeric_remove_one %>% 
+  crossv_loo(id = "fold") %>% 
+  mutate(
+    train = map(train, as_tibble),
+    test = map(test, as_tibble)
+  )
+
+all_loocv <- all_loocv %>% 
+  crossing(model_def) %>% 
+  mutate(
+    model_fit = map2(fmla, train, lm),
+    fold_mse = map2_dbl(model_fit, test, mse)
+  )
+
+all_loocv %>% 
+  group_by(degree) %>% 
+  summarise(test_mse = mean(fold_mse)) %>% 
+  arrange(test_mse)
+
+all_loocv %>% 
+  group_by(degree) %>% 
+  summarize(test_mse = mean(fold_mse)) %>% 
+    ggplot(aes(x = degree, y = test_mse)) +
+    geom_line()
+```
+<br>
+According to LOOCV, the degree 3 model has the lowest test_mse.
+<br>
+```{r echo=FALSE}
+all_5fold <- all_data_combined_no_date_numeric_remove_one %>% 
+  crossv_kfold(5, id = "fold") %>%
+  mutate(
+    train = map(train, as_tibble),
+    test = map(test, as_tibble)
+  )
+
+all_5fold <- all_5fold %>% 
+  crossing(model_def) %>% 
+  mutate(model_fit = map2(fmla, train, lm),
+         fold_mse = map2_dbl(model_fit, test, mse))
+
+all_5fold %>% 
+  ggplot(aes(x = degree, y = fold_mse, color = fold)) +
+  geom_line() 
+
+all_5fold %>% 
+  group_by(degree) %>% 
+  summarize(test_mse = mean(fold_mse)) %>%
+  ggplot(aes(x = degree, y = test_mse)) +
+  geom_line() +
+  geom_point()
+```
+
+<br>
+Given my dataset is small, I used 5 folds for the K-fold cross validation. For the subset selection method in the next analysis, it seems reasonable to set the sample fraction to .2. 
+<br>
+
+```{r echo=FALSE}
+# Test set for comparing
+
+mod_comp_dat <- all_data_combined_no_date_numeric_remove_one  %>% sample_frac(0.2)
+
+# Train set for comparing
+
+mod_bldg_dat <- all_data_combined_no_date_numeric_remove_one %>% setdiff(mod_comp_dat)
+```
+
+```{r echo=FALSE}
+# Helper functions (used from 6.2 in the Data Science Manual)
+
+predict_regsubset <- function(object, fmla , new_data, model_id)
+{
+  if(!is.data.frame(new_data)){
+    new_data <- as_tibble(new_data)
+  }
+ 
+  obj_formula <- as.formula(fmla)
+  
+  coef_vector <- coef(object, model_id)
+  
+  x_vars <- names(coef_vector)
+  mod_mat_new <- model.matrix(obj_formula, new_data)[ , x_vars]
+  
+  pred <- as.numeric(mod_mat_new %*% coef_vector)
+  
+  return(pred)
+}
+
+# test MSE
+test_mse_regsubset <- function(object, fmla , test_data){
+  
+  num_models <- object %>% summary() %>% pluck("which") %>% dim() %>% .[1]
+  
+  # storage
+  test_mse <- rep(NA, num_models)
+  
+  # observed targets
+  obs_target <- test_data %>% 
+    as_tibble() %>% 
+    pull(!!as.formula(fmla)[[2]])
+  
+  for(i in 1:num_models){
+    pred <- predict_regsubset(object, fmla, test_data, model_id = i)
+    test_mse[i] <- mean((obs_target - pred)^2)
+  }
+  
+  # test errors for every class 
+  tibble(model_index = 1:num_models,
+         test_mse    = test_mse)
+}
+
+```
+<br>
+
+```{r echo=FALSE}
+# Best subset: 5-fold CV
+
+data_bestsubset_cv <- mod_bldg_dat %>% 
+  crossv_kfold(5, id = "folds") %>% 
+  mutate(
+    fmla = "close_aal ~ . ",
+    model_fits = map2(fmla, train, 
+                      ~ regsubsets(as.formula(.x), data = .y, nvmax = 19)),
+    model_fold_mse = pmap(list(model_fits, fmla ,test), test_mse_regsubset)
+  )
+
+# Forward selection: 5-fold CV
+data_fwd_cv <- mod_bldg_dat %>% 
+  crossv_kfold(5, id = "folds") %>% 
+  mutate(
+    fmla = "close_aal ~ . ",
+    model_fits = map2(fmla, train, 
+                      ~ regsubsets(as.formula(.x), data = .y, nvmax = 19, method = "forward")),
+    model_fold_mse = pmap(list(model_fits, fmla ,test), test_mse_regsubset)
+  )
+
+# Backward selection: 5-fold CV
+data_back_cv <- mod_bldg_dat %>% 
+  crossv_kfold(5, id = "folds") %>% 
+  mutate(
+    fmla = "close_aal ~ . ",
+    model_fits = map2(fmla, 
+                      train, 
+                      ~ regsubsets(as.formula(.x), data = .y, nvmax = 19, method = "backward")),
+    model_fold_mse = pmap(list(model_fits, fmla ,test), test_mse_regsubset)
+  )
+
+```
+
+<br>
+```{r echo=FALSE}
+# Plot best subset results
+
+data_bestsubset_cv %>% 
+  unnest(model_fold_mse) %>% 
+  group_by(model_index) %>% 
+  summarize(test_mse = mean(test_mse)) %>% 
+  ggplot(aes(model_index, test_mse)) + 
+  geom_line()
+
+data_bestsubset_cv %>% 
+  unnest(model_fold_mse) %>% 
+  group_by(model_index) %>%  
+  summarize(test_mse = mean(test_mse)) %>% 
+  arrange(test_mse)
+
+# Plot forward selection test MSE
+
+data_fwd_cv %>% 
+  unnest(model_fold_mse) %>% 
+  group_by(model_index) %>% 
+  summarize(test_mse = mean(test_mse)) %>% 
+  ggplot(aes(model_index, test_mse)) + 
+    geom_line()
+
+data_fwd_cv %>% 
+  unnest(model_fold_mse) %>% 
+  group_by(model_index) %>%  
+  summarize(test_mse = mean(test_mse)) %>% 
+  arrange(test_mse) 
+
+
+# Plot back selection test MSE
+
+data_back_cv %>% 
+  unnest(model_fold_mse) %>% 
+  group_by(model_index) %>% 
+  summarize(test_mse = mean(test_mse)) %>% 
+  ggplot(aes(model_index, test_mse)) + 
+    geom_line()
+
+data_back_cv %>% 
+  unnest(model_fold_mse) %>% 
+  group_by(model_index) %>%  
+  summarize(test_mse = mean(test_mse)) %>% 
+  arrange(test_mse)
+
+```
+<br>
+The exhaustive method, forward selection, and backward selection method suggests using all 5 predictors since that gives us the lowest test MSE. The best subset validation method calculates lower test MSE values. 
+<br>
+```{r echo=FALSE}
+data_regsubsets <- tibble(
+  train = mod_bldg_dat %>% list(),
+  test  = mod_comp_dat %>% list()
+  ) %>%
+  mutate(
+    best_subset = map(train, ~ regsubsets(close_aal ~ . , 
+                                          data = .x , nvmax = 5)),
+    fwd_selection = map(train, ~ regsubsets(close_aal ~ . , 
+                                              data = .x, nvmax = 5, 
+                                              method = "forward")),         
+    back_selection = map(train, ~ regsubsets(close_aal~ . , 
+                                             data = .x, nvmax = 5, 
+                                             method = "backward"))
+    ) %>% 
+  pivot_longer(cols = c(-test, -train), names_to = "method", values_to = "fit")
+
+data_regsubsets
+
+data_regsubsets %>% 
+  pluck("fit") %>% 
+  map2(c(5, 5, 5), ~ coef(.x, id = .y)) %>% 
+  map2(c("best", "fwd", "back"), ~ enframe(.x, value = .y)) %>% 
+  reduce(full_join) %>% 
+  knitr::kable(digits = 3)
+
+```
+<br>
+For all predictor variable coefficients, the best subset, forward, and backward selection models prove to work with 5 predictors. I would also like to use Ridge regression in case there are relationships between the predictors. For example, according to the corrplot, it seemed like there was a relationship between biden_count and coronavirus_count.
+<br>
+```{r echo=FALSE}
+# lambda grid to search -- use for ridge regression (30 values)
+lambda_grid <- 10^seq(-2, 10, length = 30)
+
+# ridge regression: 5-fold cv
+ridge_cv <- mod_bldg_dat %>% 
+  glmnetUtils::cv.glmnet(
+    formula = close_aal ~ . , 
+    data = ., 
+    alpha = 0, 
+    nfolds = 5,
+    lambda = lambda_grid
+    )
+
+plot(ridge_cv)
+
+```
+<br>
+Next, I need to determine the best lambdas for ridge regression and then search for the best lambdas values for lasso regression. 
+<br>
+```{r echo=FALSE}
+ridge_lambda_min <- ridge_cv$lambda.min
+ridge_lambda_1se <- ridge_cv$lambda.1se
+
+# Lasso using 5-folds
+lasso_cv <- mod_bldg_dat %>% 
+  glmnetUtils::cv.glmnet(
+    formula = close_aal ~ . - date, 
+    data = ., 
+    alpha = 1, 
+    nfolds = 5
+    )
+
+plot(lasso_cv)
+
+```
+
+<br>
+According to the top of the lasso graph, the number of predictors decrease as lambdas increases. This observation validates that ridge and lasso are working. In the next phase, we will calculate and compare test errors. We should remember to remove date variable from the dataset.
+<br> 
+
+```{r echo=FALSE}
+lasso_lambda_1se <- lasso_cv$lambda.1se
+lasso_lambda_min <- lasso_cv$lambda.min
+
+data_glmnet <- tibble(
+  train = mod_bldg_dat %>% list(),
+  test  = mod_comp_dat %>% list()
+  ) %>%
+  mutate(
+    ridge_min = map(train, ~ glmnetUtils::glmnet(close_aal ~ . , data = .x,
+                                    alpha = 0, lambda = ridge_lambda_min)),
+    ridge_1se = map(train, ~ glmnetUtils::glmnet(close_aal ~ . , data = .x,
+                                    alpha = 0, lambda = ridge_lambda_1se)),
+    lasso_min = map(train, ~ glmnetUtils::glmnet(close_aal ~ . , data = .x,
+                                    alpha = 1, lambda = lasso_lambda_min)),
+    lasso_1se = map(train, ~ glmnetUtils::glmnet(close_aal ~ . , data = .x,
+                                    alpha = 1, lambda = lasso_lambda_1se))
+    ) %>% 
+  pivot_longer(cols = c(-test, -train), names_to = "method", values_to = "fit")
+
+data_glmnet %>% 
+  pluck("fit") %>% 
+  map( ~ coef(.x) %>% 
+         as.matrix() %>% 
+         as.data.frame() %>% 
+         rownames_to_column("name")) %>%
+  reduce(full_join, by = "name") %>% 
+  mutate_if(is.double, ~ if_else(. == 0, NA_real_, .)) %>% 
+  rename(ridge_min = s0.x,
+         ridge_1se = s0.y,
+         lasso_min = s0.x.x,
+         lasso_1se = s0.y.y) %>% 
+  knitr::kable(digits = 100) #selecting 100 digits at the end
+```
+<br>
+According to the chart above, there are no NA values. Thus, all predictors are appropriate to use and find test MSE values.   
+<br>
+
+```{r echo=FALSE}
+regsubset_error <- data_regsubsets %>% 
+  mutate(test_mse = map2(fit, test, ~ test_mse_regsubset(.x, close_aal ~ . , .y))) %>% 
+  unnest(test_mse) %>% 
+  group_by(method) %>% 
+  filter(model_index == max(model_index)) %>% 
+  select(method, test_mse) %>% 
+  ungroup()
+
+# Test error for ridge and lasso fits
+glmnet_error <- data_glmnet %>% 
+  mutate(pred = map2(fit, test, predict),
+         test_mse = map2_dbl(test, pred, ~ mean((.x$close_aal - .y)^2))) %>% 
+  unnest(test_mse) %>% 
+  select(method, test_mse)
+
+# Test errors ccombined and organzied
+regsubset_error %>% 
+  bind_rows(glmnet_error) %>% 
+  arrange(test_mse) %>%
+  knitr::kable(digits = 1000)
+
+```
+
+<br>
+Out of the models, lasso_1se has the lowest test mse, so it's relatively the best. Lastly, we are going to use polynomial regression to fit the models (see Appendix F).
+<br>
+
+```{r echo=FALSE}
+close_price_split_info <- all_data_combined_no_date_numeric_remove_one %>% 
+  initial_split(prop = 0.80)
+
+close_price_split <- tibble(
+  train = close_price_split_info %>% training() %>% list(),
+  test = close_price_split_info %>% testing() %>% list()
+)
+```
+<br>
+I chose to split the data 80/20.
+<br>
+```{r echo=FALSE}
+poly_models <- tibble(
+  fmla = str_c("close_aal ~ poly(coronavirus_count + trump_count + biden_count + sanders_count + close_anat, ", 1:5, ")"),
+  model_name = str_c("degree ", 1:5)
+) %>% 
+  mutate(fmla = map(fmla, as.formula)
+  )
+
+close_cv <- close_price_split %>% 
+  pluck("train", 1) %>% 
+  modelr::crossv_kfold(k = 5, id = "fold") %>% # kfold w/ 5 folds
+  crossing(poly_models) %>% 
+  mutate(
+    model_fit = map2(fmla, train, lm),
+    fold_mse = map2_dbl(model_fit, test, modelr::mse)
+   )
+
+close_cv %>% 
+  group_by(model_name) %>% 
+  summarize(
+    test_mse = mean(fold_mse)
+  ) %>% 
+  mutate(
+    pct_diff = 100 * (test_mse - min(test_mse))/min(test_mse)
+  ) %>% 
+  arrange(test_mse)
+
+```
+<br>
+Degree 2 and 1 seem pretty reasonable, so I'm going to test that.
+<br>
+
+```{r echo=FALSE}
+close_poly_fits <- poly_models %>% 
+  filter(model_name %in% c("degree 1", "degree 2")) %>% 
+  crossing(close_price_split) %>% 
+  mutate(
+    model_fit = map2(fmla, train, lm),
+    test_mse = map2_dbl(model_fit, test, modelr::mse)
+  )
+
+target_var <- close_price_split_info %>% 
+  testing() %>% 
+  pull(close_aal) %>% 
+  var()
+
+close_poly_fits %>% 
+  select(model_name, test_mse) %>% 
+  arrange(test_mse)
+```
+<br>
+The degree 5 polynomial regression fit has the lowest test MSE. Its test mse falls between the test mse's ridge 1se and lasso 1se. Finally I want to plot degree 5 polynomial regression. 
+<br>
+```{r echo=FALSE}
+close_price_split_info %>% 
+  testing() %>% 
+  ggplot(aes(x = coronavirus_count + trump_count + biden_count + sanders_count + close_anat, y = close_aal)) + 
+  xlab("All Predictors") +
+  ylab("AAL Close Prices") +
+  geom_point(alpha = 0.4) +
+  geom_smooth(data = close_price_split_info %>% training(),
+              method = "lm",
+              formula = "y ~ poly(x, 5)",
+              se = FALSE
+            ) 
+```
+<br>
+Unlike the linear model, the polynomial model would not predict any negative values. 
+<br>
+
+# Discussion/Conclusion
+
+Lasso 1SE Regression selected the best models as it had the lowest test MSE. The lambda value was within 1 SD to predict the close price of AAL stock in the past couple of months. As hypothesized, the relevance of coronavirus does seem to impact American Airline's stock. This makes sense because customers are afraid to sit in a confined area surrounded by potentially sick people. Biden_count was also a good predictor of close_AAL. This is interesting because there is an article from US News claiming that Biden would be better for the economy than Bernie Sanders (Soergel, 2020). There is another article discussing how Trump is tanking the stock market (Stokols, 2020). From the analysis, there's not enough information to conclude that the relevance of Trump or Sanders predicts the closing price of AAL. In the future, I might use some of these predictors to invest more in American Airlines stock. If I do more analysis on the relevance of President Trump and Sanders, I might want to sell my stock in AAL. In the future, I want to add a line of code beside the that indicates if the stock market has gone up or down from the day before and perform logistic regression on the dataset. This addition might help when it comes to making quick trades on the market through R code. I also want to run PLS/PCR as there are potentially better models out there. Lastly, I want to get more data (perhaps from the past 180 days) and exclude coronavirus since no one was searching it last year. 
+
+
+
+# Appendices
+
+# Appendix A: Load Packages and Data
+
+library(MASS)
+library(tidyverse)
+library(janitor)
+library(skimr)
+library(modelr)
+library(tidyr)
+library(dplyr)
+library(base)
+library(ggplot2)
+library(readr)
+library(GGally)
+library(grid)
+library(gridExtra)
+library(corrplot)
+library(corrr)
+library(class)
+library(broom)
+library(naniar)
+library(rsample)
+library(leaps) # find the best subset selection
+library(glmnet) # ridge & lasso
+library(glmnetUtils) # improves working with glmnet
+
+conflicted::conflict_prefer("filter", "dplyr")
+conflicted::conflict_prefer("select", "dplyr")
+conflicted::conflict_prefer("setdiff", "dplyr")
+conflicted::conflict_prefer("corrplot", "corrplot")
+
+set.seed(26535) # Set the seed to make it reproducible
+
+
+# Load Data 
+
+coronavirus_90_days_dat <- read_csv("data/coronavirus_US_90_days.csv") %>% 
+  clean_names() %>% 
+  rename(date = category_all_categories) %>% 
+  rename(coronavirus_count = x2) %>% 
+  mutate_if(is_character, factor) %>% 
+  clean_names()
+
+sanders_90_days_dat <- read_csv("data/bernie_sanders_90_days.csv") %>% 
+  clean_names() %>% 
+  rename(date = category_all_categories) %>%
+  rename(sanders_count = x2) %>% 
+  mutate_if(is_character, factor) %>%
+  clean_names()
+
+biden_90_days_dat <- read_csv("data/joe_biden_90_days.csv") %>% 
+  clean_names() %>% 
+  rename(date = category_all_categories) %>%
+  rename(biden_count = x2) %>% 
+  mutate_if(is_character, factor) %>% 
+  clean_names()
+
+trump_90_days_dat <- read_csv("data/donald_trump_90_days.csv") %>% 
+  clean_names() %>% 
+  rename(date = category_all_categories) %>%
+  rename(trump_count = x2) %>% 
+  mutate_if(is_character, factor) %>% 
+  clean_names()
+
+anat_90_days_dat <- read_csv("data/ANAT_yahoo_90_days.csv") %>% 
+  clean_names() %>% 
+  rename(close_anat = close) %>% 
+  mutate_if(is_character, factor)
+
+aal_90_days_dat <- read_csv("data/AAL_yahoo_90_days.csv") %>% 
+  clean_names() %>% 
+  rename(close_aal = close) %>% 
+  mutate_if(is_character, factor)
+
+# Appendix B: Tidy Data 
+
+# Skim
+skim(coronavirus_90_days_dat)
+
+skim(sanders_90_days_dat)
+
+skim(biden_90_days_dat)
+
+skim(trump_90_days_dat)
+
+skim(anat_90_days_dat)
+
+skim(aal_90_days_dat)
+
+# omit any NA values
+
+coronavirus_90_days_dat %>% 
+  na.omit()
+
+sanders_90_days_dat %>% 
+  na.omit()
+
+trump_90_days_dat %>%
+  na.omit()
+
+biden_90_days_dat %>% 
+  na.omit()
+
+anat_90_days_dat %>%
+  na.omit()
+
+aal_90_days_dat  %>% 
+  na.omit()
+
+
+coronavirus_90_days_dat_tidy <- coronavirus_90_days_dat[c(2:91), ]
+
+sanders_90_days_dat_tidy <- sanders_90_days_dat[c(2:91), ]
+
+biden_90_days_dat_tidy <- biden_90_days_dat[c(2:91), ]
+
+trump_90_days_dat_tidy <- trump_90_days_dat[c(2:91), ]
+
+anat_90_days_dat_tidy <- anat_90_days_dat %>%
+  select(-high, -low, -adj_close, -volume, -open)
+
+aal_90_days_dat_tidy <- aal_90_days_dat %>%
+  select(-high, -low, -adj_close, -volume, -open)
+
+anat_aal_join <- left_join(anat_90_days_dat_tidy, aal_90_days_dat_tidy , by=c("date"))
+
+anat_aal_coronavirus_join <- left_join(anat_aal_join, coronavirus_90_days_dat_tidy , by=c("date"))
+
+anat_aal_coronavirus_sanders_join <- left_join(anat_aal_coronavirus_join, sanders_90_days_dat_tidy , by=c("date"))
+
+anat_aal_coronavirus_sanders_biden_join <- left_join(anat_aal_coronavirus_sanders_join, biden_90_days_dat_tidy , by=c("date"))
+
+all_data_combined <- left_join(anat_aal_coronavirus_sanders_biden_join, trump_90_days_dat_tidy , by=c("date"))
+
+# For the coronavirus dataset, we need to change the less than 1 value to 1 to run appropriate regression methods 
+
+all_data_combined_tidy <- as.data.frame(sapply(all_data_combined, gsub, pattern = "<|>", replacement = ""))  
+
+all_data_combined_tidy <- data.frame(lapply(all_data_combined_tidy, function(x) as.numeric(as.factor(x))))
+
+all_data_combined_no_date <- all_data_combined_tidy  %>%
+  select(-date) 
+
+all_data_combined_no_date_numeric <- data.frame(lapply(all_data_combined_no_date, function(x) as.numeric(as.factor(x))))
+
+all_data_combined_no_date_numeric_remove_one <- all_data_combined_no_date_numeric[c(23:60), ]
+
+all_data_combined_no_date_numeric_remove_one
+
+# Appendix C: EDA 
+
+ggscatmat(all_data_combined_no_date_numeric_remove_one)
+
+all_data_combined_no_date_numeric_remove_one %>%
+  cor(use="pairwise.complete.obs") %>%
+  corrplot()
+
+all_data_combined_no_date_numeric_remove_one %>%
+  skim_without_charts()
+
+skim(all_data_combined_no_date_numeric_remove_one )
+
+coronavirus_aal_plot <- all_data_combined_tidy %>%
+  ggplot(aes(all_data_combined_tidy$date, group = 1)) +
+  geom_line(aes(y=coronavirus_count, group = 1), color="red") +  
+  geom_line(aes(y=close_aal, group = 1), color="green") + 
+  xlab("Past 90 days") +
+  ylab("Numeric Values") +
+  ggtitle("Coronavirus v Stock Prices in 2020") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 0, size = 4), legend.title = element_blank()) 
+coronavirus_aal_plot
+
+biden_aal_plot <- all_data_combined_tidy %>%
+  ggplot(aes(all_data_combined_tidy$date, group = 1)) +
+  geom_line(aes(y=biden_count, group = 1), color="red") +  
+  geom_line(aes(y=close_aal, group = 1), color="green") + 
+  xlab("Past 90 days") +
+  ylab("Numeric Values") +
+  ggtitle("Biden v Stock Prices in 2020") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 0, size = 4), legend.title = element_blank()) 
+biden_aal_plot
+
+sanders_aal_plot <- all_data_combined_tidy %>%
+  ggplot(aes(all_data_combined_tidy$date, group = 1)) +
+  geom_line(aes(y=sanders_count, group = 1), color="red") +  
+  geom_line(aes(y=close_aal, group = 1), color="green") + 
+  xlab("Past 90 days") +
+  ylab("Numeric Values") +
+  ggtitle("Sanders v Stock Prices in 2020") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 0, size = 4), legend.title = element_blank()) 
+sanders_aal_plot
+
+trump_aal_plot <- all_data_combined_tidy %>%
+  ggplot(aes(all_data_combined_tidy$date, group = 1)) +
+  geom_line(aes(y=trump_count, group = 1), color="red") +  
+  geom_line(aes(y=close_aal, group = 1), color="green") + 
+  xlab("Past 90 days") +
+  ylab("Numeric Values") +
+  ggtitle("Trump v Stock Prices in 2020") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 0, size = 4), legend.title = element_blank()) 
+trump_aal_plot
+
+anat_aal_plot <- all_data_combined_tidy %>%
+  ggplot(aes(all_data_combined_tidy$date, group = 1)) +
+  geom_line(aes(y=close_anat, group = 1), color="red") +  
+  geom_line(aes(y=close_aal, group = 1), color="green") + 
+  xlab("Past 90 days") +
+  ylab("Numeric Values") +
+  ggtitle("ANAT Stock Prices v AAL Stock Prices in 2020") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 0, size = 4), legend.title = element_blank()) 
+anat_aal_plot
+
+# Appendix D: Simple Linear Regression 
+
+lm_fit <- all_data_combined_no_date_numeric_remove_one %>% lm(formula = close_aal ~ coronavirus_count)
+
+lm_fit %>% 
+  summary()
+
+lm_fit %>% 
+  glance() %>% 
+  clean_names()
+
+lm_fit %>% 
+  tidy() %>% 
+  bind_cols(lm_fit %>% confint_tidy()) %>% 
+  clean_names()
+
+# Confidence and Prediction Intervals
+
+coronavirus_sample_data <- tibble(coronavirus_count = c(12, 19, 31))
+
+coronavirus_sample_data %>% 
+  predict(lm_fit, newdata = ., interval = "confidence") %>% 
+  as_tibble()
+
+coronavirus_sample_data %>% 
+  predict(lm_fit, newdata = ., interval = "prediction") %>% 
+  as_tibble()
+
+# Assessing many models
+
+coronavirus_augmented <- all_data_combined_no_date_numeric_remove_one %>% 
+  augment(lm_fit, data = .) %>% 
+  clean_names()
+
+coronavirus_augmented %>% 
+  ggplot(aes(x = coronavirus_count, y = close_aal)) +
+  geom_point() +
+  geom_line(aes(y = fitted), color = "pink", size = 1)
+
+coronavirus_augmented %>% 
+  ggplot(aes(x = coronavirus_count, y = close_aal)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  geom_smooth(se = FALSE, color = "red", linetype = "dashed")
+
+coronavirus_augmented %>% 
+  ggplot(aes(x = fitted, y = sqrt(abs(std_resid)))) +
+  geom_point() +
+  geom_smooth(color = "red", se = FALSE)
+
+# Multiple Linear Regression
+
+tibble(data = list(all_data_combined_no_date_numeric_remove_one))
+
+all_models <- tibble(data = list(all_data_combined_no_date_numeric_remove_one)) %>% 
+  mutate(mod_01 = map(data, lm, formula = close_aal ~ coronavirus_count),
+         mod_02 = map(data, lm, formula = close_aal ~ poly(coronavirus_count, 5)),
+         mod_03 = map(data, lm, formula = close_aal ~ coronavirus_count + biden_count),
+         mod_04 = map(data, lm, formula = close_aal ~ coronavirus_count + trump_count + biden_count),
+         mod_05 = map(data, lm, formula = close_aal ~ coronavirus_count*biden_count),
+         mod_06 = map(data, lm, formula = close_aal ~ .),
+         mod_07 = map(data, lm, formula = close_aal ~ .*.))
+
+all_models <- all_models %>% 
+  pivot_longer(cols = -data, names_to = "model_name", values_to = "model_fit")
+
+# Assessing Models
+
+all_models %>% 
+  mutate(mod_glance = map(model_fit, glance)) %>%
+  unnest(mod_glance) %>% 
+  arrange(AIC) %>% 
+  select(model_name, AIC, everything())
+
+all_models %>% 
+  mutate(
+    mod_glance = map(model_fit, glance),
+    mae  = map2_dbl(model_fit, data, mae),
+    rmse = map2_dbl(model_fit, data, rmse),
+    mape = map2_dbl(model_fit, data, mape)
+  ) %>% 
+  unnest(mod_glance) %>% 
+  select(
+    model_name, r.squared, adj.r.squared, 
+    AIC, BIC, deviance, sigma, rmse, mae, mape
+  ) %>% 
+  pivot_longer(cols = -model_name, names_to = "measure", values_to = "value") %>% 
+  ggplot(aes(value, model_name)) +
+  geom_point() +
+  facet_wrap(. ~ measure, scales = "free_x")
+
+# Store the information within model database
+
+all_models <- all_models %>%
+  mutate(
+    mod_glance  = map(model_fit, glance),
+    mod_tidy    = map(model_fit, tidy),
+    add_tidy    = map(model_fit, confint_tidy),
+    mod_tidy    = map2(mod_tidy, add_tidy, bind_cols),
+    mod_augment = map2(model_fit, data, augment)
+  ) %>%
+  select(-add_tidy)
+
+# Plot 95 CI for each model
+
+all_models %>% 
+  unnest(mod_tidy) %>% 
+  filter(term %in% c("coronavirus_count", "biden_count", "sanders_count", "trump_count", "close_anat")) %>% 
+  ggplot(aes(model_name, estimate)) +
+  geom_pointrange(aes(ymin = conf.low, ymax = conf.high)) +
+  facet_wrap(. ~ term, scales = "free_x") +
+  coord_flip()
+
+# Compare polynomial fit (Model 2) to Model 1
+
+all_models %>% 
+  filter(model_name %in% c("mod_01", "mod_02")) %>% 
+  unnest(mod_augment) %>% 
+  ggplot(aes(x = coronavirus_count, y = close_aal)) +
+  geom_point() +
+  geom_line(aes(y = .fitted, color = model_name), size = 1)
+
+# Appendix E: Cross Validation 
+
+all_data_validation <- tibble(train = all_data_combined_no_date_numeric_remove_one %>% sample_frac(0.8) %>% list(),
+                              test  = all_data_combined_no_date_numeric_remove_one %>% setdiff(train) %>% list())
+
+model_def <- tibble(degree = 1:5,
+                    fmla = str_c("close_aal ~ poly(coronavirus_count, ", degree, ")"))
+
+all_data_validation <- all_data_validation %>% 
+  crossing(model_def)
+
+all_data_validation <- all_data_validation %>% 
+  mutate(model_fit = map2(fmla, train, lm),
+         test_mse = map2_dbl(model_fit, test, mse))
+
+all_data_validation %>% 
+  select(degree, test_mse) %>% 
+  arrange(test_mse)
+
+all_data_validation %>% 
+  select(degree, test_mse) %>% 
+  ggplot(aes(x = degree, y = test_mse)) +
+  geom_line()
+  
+# LOOCV
+
+all_loocv <- all_data_combined_no_date_numeric_remove_one %>% 
+  crossv_loo(id = "fold") %>% 
+  mutate(
+    train = map(train, as_tibble),
+    test = map(test, as_tibble)
+  )
+
+all_loocv <- all_loocv %>% 
+  crossing(model_def) %>% 
+  mutate(
+    model_fit = map2(fmla, train, lm),
+    fold_mse = map2_dbl(model_fit, test, mse)
+  )
+
+all_loocv %>% 
+  group_by(degree) %>% 
+  summarise(test_mse = mean(fold_mse)) %>% 
+  arrange(test_mse)
+
+all_loocv %>% 
+  group_by(degree) %>% 
+  summarize(test_mse = mean(fold_mse)) %>% 
+  ggplot(aes(x = degree, y = test_mse)) +
+  geom_line()
+
+# K-fold
+
+all_5fold <- all_data_combined_no_date_numeric_remove_one %>% 
+  crossv_kfold(5, id = "fold") %>%
+  mutate(
+    train = map(train, as_tibble),
+    test = map(test, as_tibble)
+  )
+
+all_5fold <- all_5fold %>% 
+  crossing(model_def) %>% 
+  mutate(model_fit = map2(fmla, train, lm),
+         fold_mse = map2_dbl(model_fit, test, mse))
+
+all_5fold %>% 
+  ggplot(aes(x = degree, y = fold_mse, color = fold)) +
+  geom_line() 
+
+all_5fold %>% 
+  group_by(degree) %>% 
+  summarize(test_mse = mean(fold_mse)) %>%
+  ggplot(aes(x = degree, y = test_mse)) +
+  geom_line() +
+  geom_point()
+
+
+# Subset Selection Methods 
+
+mod_comp_dat <- all_data_combined_no_date_numeric_remove_one  %>% sample_frac(0.2)
+
+mod_bldg_dat <- all_data_combined_no_date_numeric_remove_one %>% setdiff(mod_comp_dat)
+
+# Helper functions (used from 6.2 in the Data Science Manual)
+
+predict_regsubset <- function(object, fmla , new_data, model_id)
+{
+  if(!is.data.frame(new_data)){
+    new_data <- as_tibble(new_data)
+  }
+  
+  obj_formula <- as.formula(fmla)
+  
+  coef_vector <- coef(object, model_id)
+  
+  x_vars <- names(coef_vector)
+  mod_mat_new <- model.matrix(obj_formula, new_data)[ , x_vars]
+  
+  pred <- as.numeric(mod_mat_new %*% coef_vector)
+  
+  return(pred)
+}
+
+test_mse_regsubset <- function(object, fmla , test_data){
+  
+  num_models <- object %>% summary() %>% pluck("which") %>% dim() %>% .[1]
+  
+  # storage
+  test_mse <- rep(NA, num_models)
+  
+  # observed targets
+  obs_target <- test_data %>% 
+    as_tibble() %>% 
+    pull(!!as.formula(fmla)[[2]])
+  
+  for(i in 1:num_models){
+    pred <- predict_regsubset(object, fmla, test_data, model_id = i)
+    test_mse[i] <- mean((obs_target - pred)^2)
+  }
+  
+  # test errors for every class 
+  tibble(model_index = 1:num_models,
+         test_mse    = test_mse)
+}
+
+# Best subset: 5-fold CV
+
+data_bestsubset_cv <- mod_bldg_dat %>% 
+  crossv_kfold(5, id = "folds") %>% 
+  mutate(
+    fmla = "close_aal ~ . ",
+    model_fits = map2(fmla, train, 
+                      ~ regsubsets(as.formula(.x), data = .y, nvmax = 19)),
+    model_fold_mse = pmap(list(model_fits, fmla ,test), test_mse_regsubset)
+  )
+
+# Forward selection: 5-fold CV
+data_fwd_cv <- mod_bldg_dat %>% 
+  crossv_kfold(5, id = "folds") %>% 
+  mutate(
+    fmla = "close_aal ~ . ",
+    model_fits = map2(fmla, train, 
+                      ~ regsubsets(as.formula(.x), data = .y, nvmax = 19, method = "forward")),
+    model_fold_mse = pmap(list(model_fits, fmla ,test), test_mse_regsubset)
+  )
+
+# Backward selection: 5-fold CV
+data_back_cv <- mod_bldg_dat %>% 
+  crossv_kfold(5, id = "folds") %>% 
+  mutate(
+    fmla = "close_aal ~ . ",
+    model_fits = map2(fmla, 
+                      train, 
+                      ~ regsubsets(as.formula(.x), data = .y, nvmax = 19, method = "backward")),
+    model_fold_mse = pmap(list(model_fits, fmla ,test), test_mse_regsubset)
+  )
+
+# Plot best subset results
+
+data_bestsubset_cv %>% 
+  unnest(model_fold_mse) %>% 
+  group_by(model_index) %>% 
+  summarize(test_mse = mean(test_mse)) %>% 
+  ggplot(aes(model_index, test_mse)) + 
+  geom_line()
+
+data_bestsubset_cv %>% 
+  unnest(model_fold_mse) %>% 
+  group_by(model_index) %>%  
+  summarize(test_mse = mean(test_mse)) %>% 
+  arrange(test_mse)
+
+# Plot forward selection test MSE
+
+data_fwd_cv %>% 
+  unnest(model_fold_mse) %>% 
+  group_by(model_index) %>% 
+  summarize(test_mse = mean(test_mse)) %>% 
+  ggplot(aes(model_index, test_mse)) + 
+  geom_line()
+
+data_fwd_cv %>% 
+  unnest(model_fold_mse) %>% 
+  group_by(model_index) %>%  
+  summarize(test_mse = mean(test_mse)) %>% 
+  arrange(test_mse) 
+
+
+# Plot back selection test MSE
+
+data_back_cv %>% 
+  unnest(model_fold_mse) %>% 
+  group_by(model_index) %>% 
+  summarize(test_mse = mean(test_mse)) %>% 
+  ggplot(aes(model_index, test_mse)) + 
+  geom_line()
+
+data_back_cv %>% 
+  unnest(model_fold_mse) %>% 
+  group_by(model_index) %>%  
+  summarize(test_mse = mean(test_mse)) %>% 
+  arrange(test_mse)
+
+# Create a data table
+
+data_regsubsets <- tibble(
+  train = mod_bldg_dat %>% list(),
+  test  = mod_comp_dat %>% list()
+) %>%
+  mutate(
+    best_subset = map(train, ~ regsubsets(close_aal ~ . , 
+                                          data = .x , nvmax = 5)),
+    fwd_selection = map(train, ~ regsubsets(close_aal ~ . , 
+                                            data = .x, nvmax = 5, 
+                                            method = "forward")),         
+    back_selection = map(train, ~ regsubsets(close_aal~ . , 
+                                             data = .x, nvmax = 5, 
+                                             method = "backward"))
+  ) %>% 
+  pivot_longer(cols = c(-test, -train), names_to = "method", values_to = "fit")
+
+data_regsubsets
+
+data_regsubsets %>% 
+  pluck("fit") %>% 
+  map2(c(5, 5, 5), ~ coef(.x, id = .y)) %>% 
+  map2(c("best", "fwd", "back"), ~ enframe(.x, value = .y)) %>% 
+  reduce(full_join) %>% 
+  knitr::kable(digits = 3)
+  
+  
+# Appendix F: Ridge and Lasso 
+
+# Lambda grid to search -- use for ridge regression (30 values)
+lambda_grid <- 10^seq(-2, 10, length = 30)
+
+# Ridge regression: 5-fold cv
+ridge_cv <- mod_bldg_dat %>% 
+  glmnetUtils::cv.glmnet(
+    formula = close_aal ~ . , 
+    data = ., 
+    alpha = 0, 
+    nfolds = 5,
+    lambda = lambda_grid
+  )
+
+plot(ridge_cv)
+
+ridge_lambda_min <- ridge_cv$lambda.min
+ridge_lambda_1se <- ridge_cv$lambda.1se
+
+# Lasso using 5-folds
+lasso_cv <- mod_bldg_dat %>% 
+  glmnetUtils::cv.glmnet(
+    formula = close_aal ~ . - date, 
+    data = ., 
+    alpha = 1, 
+    nfolds = 5
+  )
+
+plot(lasso_cv)
+
+lasso_lambda_1se <- lasso_cv$lambda.1se
+lasso_lambda_min <- lasso_cv$lambda.min
+
+data_glmnet <- tibble(
+  train = mod_bldg_dat %>% list(),
+  test  = mod_comp_dat %>% list()
+) %>%
+  mutate(
+    ridge_min = map(train, ~ glmnetUtils::glmnet(close_aal ~ . , data = .x,
+                                                 alpha = 0, lambda = ridge_lambda_min)),
+    ridge_1se = map(train, ~ glmnetUtils::glmnet(close_aal ~ . , data = .x,
+                                                 alpha = 0, lambda = ridge_lambda_1se)),
+    lasso_min = map(train, ~ glmnetUtils::glmnet(close_aal ~ . , data = .x,
+                                                 alpha = 1, lambda = lasso_lambda_min)),
+    lasso_1se = map(train, ~ glmnetUtils::glmnet(close_aal ~ . , data = .x,
+                                                 alpha = 1, lambda = lasso_lambda_1se))
+  ) %>% 
+  pivot_longer(cols = c(-test, -train), names_to = "method", values_to = "fit")
+
+data_glmnet %>% 
+  pluck("fit") %>% 
+  map( ~ coef(.x) %>% 
+         as.matrix() %>% 
+         as.data.frame() %>% 
+         rownames_to_column("name")) %>%
+  reduce(full_join, by = "name") %>% 
+  mutate_if(is.double, ~ if_else(. == 0, NA_real_, .)) %>% 
+  rename(ridge_min = s0.x,
+         ridge_1se = s0.y,
+         lasso_min = s0.x.x,
+         lasso_1se = s0.y.y) %>% 
+  knitr::kable(digits = 100) #selecting 100 digits at the end
+
+regsubset_error <- data_regsubsets %>% 
+  mutate(test_mse = map2(fit, test, ~ test_mse_regsubset(.x, close_aal ~ . , .y))) %>% 
+  unnest(test_mse) %>% 
+  group_by(method) %>% 
+  filter(model_index == max(model_index)) %>% 
+  select(method, test_mse) %>% 
+  ungroup()
+
+# Test error for ridge and lasso fits
+glmnet_error <- data_glmnet %>% 
+  mutate(pred = map2(fit, test, predict),
+         test_mse = map2_dbl(test, pred, ~ mean((.x$close_aal - .y)^2))) %>% 
+  unnest(test_mse) %>% 
+  select(method, test_mse)
+
+# Test errors ccombined and organzied
+regsubset_error %>% 
+  bind_rows(glmnet_error) %>% 
+  arrange(test_mse) %>%
+  knitr::kable(digits = 1000)
+
+# Appendix G: Polynomial Regression 
+
+close_price_split_info <- all_data_combined_no_date_numeric_remove_one %>% 
+  initial_split(prop = 0.80)
+
+close_price_split <- tibble(
+  train = close_price_split_info %>% training() %>% list(),
+  test = close_price_split_info %>% testing() %>% list()
+  )
+
+poly_models <- tibble(
+  fmla = str_c("close_aal ~ poly(coronavirus_count + trump_count + biden_count + sanders_count + close_anat, ", 1:5, ")"),
+  model_name = str_c("degree ", 1:5)
+) %>% 
+  mutate(fmla = map(fmla, as.formula)
+  )
+
+close_cv <- close_price_split %>% 
+  pluck("train", 1) %>% 
+  modelr::crossv_kfold(k = 5, id = "fold") %>% # kfold w/ 5 folds
+  crossing(poly_models) %>% 
+  mutate(
+    model_fit = map2(fmla, train, lm),
+    fold_mse = map2_dbl(model_fit, test, modelr::mse)
+  )
+
+close_cv %>% 
+  group_by(model_name) %>% 
+  summarize(
+    test_mse = mean(fold_mse)
+  ) %>% 
+  mutate(
+    pct_diff = 100 * (test_mse - min(test_mse))/min(test_mse)
+  ) %>% 
+  arrange(test_mse)
+
+close_poly_fits <- poly_models %>% 
+  filter(model_name %in% c("degree 1", "degree 2")) %>% 
+  crossing(close_price_split) %>% 
+  mutate(
+    model_fit = map2(fmla, train, lm),
+    test_mse = map2_dbl(model_fit, test, modelr::mse)
+  )
+
+target_var <- close_price_split_info %>% 
+  testing() %>% 
+  pull(close_aal) %>% 
+  var()
+
+close_poly_fits %>% 
+  select(model_name, test_mse) %>% 
+  arrange(test_mse)
+
+close_price_split_info %>% 
+  testing() %>% 
+  ggplot(aes(x = coronavirus_count + trump_count + biden_count + sanders_count + close_anat, y = close_aal)) + 
+  xlab("All Predictors") +
+  ylab("AAL Close Prices") +
+  geom_point(alpha = 0.4) +
+  geom_smooth(data = close_price_split_info %>% training(),
+              method = "lm",
+              formula = "y ~ poly(x, 5)",
+              se = FALSE
+  ) 
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+

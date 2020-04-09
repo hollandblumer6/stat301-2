@@ -1,0 +1,54 @@
+---
+title: "Final Project Memo"
+author: "Holland Blumer"
+output: html_document
+---
+
+```{r setup, message=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(janitor)
+library(skimr)
+library(GGally)
+library(cowplot)
+```
+
+## R Markdown
+
+***I modified this memo after meeting with Professor Hedberg earlier this week. Before resubmitting I only had one predictor variable. I plan to explore 2 more datasets and compare them to the US airline stock.
+
+As a "self-prescribed" hypochondriac, I've been hugely attentive to the drastic spread of the Coronavirus across the world. Every day more and more cases have been reported as it spreads from Wuhan, China to Chicago, IL (10 miles away!). There is a lack of data being released on the exact whereabouts of all these cases. Most recently, the CDC declared the Coronavirus to be a national emergency that allows national states to shutdown flights to and from certain locations of the world. Many Americans who recently traveled to China have volunteered to be quarantined for 14 days until they are cleared from all symptoms related to the virus. American Airlines, for example, have canceled their flight route to Hong Kong and other airlines have done the same.
+
+I have also become interested in investing in stocks. The airline stock has notably dipped during this time. An article described the U.S airlines as undergoing a "triple whammy", implying other factors are contributing to the dip in the stock. One of these factors could be the plane crash data that are related to airlines' decision to halt their use of the Boeing's 737 Max airplane through the summertime(Chokshi). Additionally, President Trump's impeachment has been going on during this time..perhaps there is a correlation between this and airline stock. All the U.S airlines' long-term uptrends could be triggered by these things and dip as a result(Farley).
+
+I'm using the final project as an opportunity to use R to explore the topics that I am genuinely curious about. I would first like to compare these prices with the rising relevance of the Corona Virus. There is hardly any information on the exact number of cases released. I plan to extract the data from Google trends with "Coronavirus" in the search. Through this, I can see where people have researched the virus the most frequently. I would also like to analyze the poll data on Trump's impeachment as well as airplane crash report data. For both the impeachment trial data and airplane incident data, I will most likely compare these to historical stock data. Like I did last quarter, I extracted the stock data from Yahoo Finance. This data, coming from large firms, is pretty tidy as expected. This quarter, I want to advance my web scraping capabilities to get real-time data on the stocks and use this data to predict the stock prices of the future. 
+
+<br>
+
+Timeline
+<br>
+February 20th: I want to check historical data of stock prices and go to office hours to see how I can scrape real-time data from Yahoo Finance. 
+February 25th: I would like to combine the datasets and tidy them appropriately. Hopefully, by then, there will be more released data on the number of cases of the Coronavirus and the location of these cases other than the Google trend data. Perhaps U.S airline stocks are declining but International Airlines stock prices are doing well. I will scrape the IAG (International Consolidated Airlines Group S.A.) data from the web. 
+February 26th: I will start performing linear regression techniques on the data and evaluate the success of several predictor variables.
+Final Project Workweek: I will definitely take advantage of this time to meet with professors and make sure that I'm using good linear regression techniques. I wanna start now to prepare for what I'm doing in the future. 
+<br>
+
+
+
+
+<br>
+“Airplane Crashes - Dataset by Data-Society.” Data.world, 4 Dec. 2016, data.world/data-society/airplane-crashes.
+<br>
+Chokshi, Niraj. “United and Southwest Extend Halt on Boeing 737 Max Flights.” The New York Times, The New York Times, 14 Feb. 2020, www.nytimes.com/2020/02/14/business/boeing-737-max-airlines.html.
+<br>
+“Coronavirus.” Google Trends, Google, trends.google.com/trends/trendingsearches/realtime?geo=US&amp;category=m.
+<br>
+Farley, Alan. “Airline Stocks Heading South After Coronavirus Scare.” Investopedia, Investopedia, 29 Jan. 2020, www.investopedia.com/airline-stocks-heading-south-after-coronavirus-scare-4782947.
+<br>
+“IAG Stock Price: International Consolidated Airlines Group S.A. Stock Quote (U.K.: London).” MarketWatch, www.marketwatch.com/investing/stock/iag?countrycode=uk.
+<br>
+Mejia, Felix. “Trump Impeachment Polls.” Kaggle, 4 Feb. 2020, www.kaggle.com/fmejia21/trump-impeachment-polls/data.
+<br>
+“NYSE ARCA AIRLINE INDEX (^XAL) Historical Data - Yahoo Finance.” Finance, yhoo.it/2GExcJc.
+ <br>
+
